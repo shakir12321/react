@@ -1,0 +1,20 @@
+###############################################################################
+##
+##  parameters.vm - this velocity script defines the widget parameters
+##
+
+###############################################################################
+##
+##  Velocity Context - following objects are in the velocity context
+##
+## java.util.Map $parameters
+## com.polarion.alm.shared.api.model.rp.parameter.ParameterFactory $factory
+##
+
+#set($myFields = $objectFactory.newSet())
+
+#set($void = $myFields.add("priority"))
+#set($void = $myFields.add("severity"))
+
+$parameters.put("myFieldsParameter", $factory.fields("My Fields Parameter").fields($myFields).build())
+
