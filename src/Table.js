@@ -45,33 +45,43 @@ function Table() {
             </tr>
           </thead>
           <tbody>
-            {workItems.map((item, index) => (
-              <tr key={item.id}>
-                <td>{index + 1}</td>
-                <td>
-                  {/* Clicking on the work item id navigates to the Detail view.
-                      The URL parameter is the work item id. */}
-                  <Link to={`/${encodeURIComponent(item.id)}`}>
-                    {item.id}
-                  </Link>
-                </td>
-                <td>
-                  <a href={item.links.self} target="_blank" rel="noopener noreferrer">
-                    API View
-                  </a>
-                </td>
-                <td>
-                  <a href={item.links.portal} target="_blank" rel="noopener noreferrer">
-                    Portal View
-                  </a>
-                </td>
-              </tr>
-            ))}
+            {workItems.map((item, index) => {
+              // If item.id is "testproject/TESTPROJECT-189", strip "testproject/"
+              const bareId = item.id.replace("testproject/", "");
+  
+              return (
+                <tr key={item.id}>
+                  <td>{index + 1}</td>
+                  <td>
+                    <Link to={`/${bareId}`}>{bareId}</Link>
+                  </td>
+                  <td>
+                    <a
+                      href={item.links.self}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      API View
+                    </a>
+                  </td>
+                  <td>
+                    <a
+                      href={item.links.portal}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Portal View
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}
     </div>
   );
+  
 }
 
 export default Table;
