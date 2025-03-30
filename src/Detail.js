@@ -20,7 +20,8 @@ function Detail() {
     }
 
     // Fetch the full JSON response
-    const url = `http://ec2amaz-fk4qupb/polarion/rest/v1/projects/testproject/workitems/${encodeURIComponent(
+    // const url = `http://ec2amaz-fk4qupb/polarion/rest/v1/projects/testproject/workitems/${encodeURIComponent(
+    const url = `/polarion/rest/v1/projects/testproject/workitems/${encodeURIComponent(
       workItem
     )}`;
 

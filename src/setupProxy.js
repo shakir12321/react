@@ -8,6 +8,7 @@ module.exports = function(app) {
       target: 'http://ec2amaz-fk4qupb', // The domain of your Polarion server
       changeOrigin: true,
       // You can add onProxyReq or onProxyRes here to manipulate headers if needed
+      logLevel: 'debug',
     })
   );
 };
