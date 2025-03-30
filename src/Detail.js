@@ -4,40 +4,32 @@ import "./App.css";
 import { Link, useParams } from "react-router-dom";
 
 function Detail() {
-  // Extract the work item id from the URL.
   const { workItem } = useParams();
-
-  // We initialize "item" to null to indicate the detail data hasn't loaded yet.
   const [item, setItem] = useState(null);
 
   useEffect(() => {
-    // Prepare headers for the API request.
     let headers;
     if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-      console.log("Using the PAT from .env");
       headers = {
         Authorization: `Bearer ${process.env.REACT_APP_POLARION_TOKEN}`,
       };
     } else {
-      console.log("Using the REST Token from session");
       headers = {
         "X-Polarion-REST-Token": window.getRestApiToken(),
       };
     }
 
-    // Construct the URL for a single work item.
-    // Here we assume your project id is "testproject".
+    // Fetch the full JSON response
     const url = `http://ec2amaz-fk4qupb/polarion/rest/v1/projects/testproject/workitems/${encodeURIComponent(
       workItem
     )}`;
 
-    // Make the API request to get details for the selected work item.
     axios
       .get(url, { headers })
       .then((response) => {
-        console.log("Detail API Response:", response.data);
-        // Assuming the detailed work item data is in response.data.data.
-        setItem(response.data.data);
+        console.log("Full API Response:", response.data);
+        // Store the entire response.data
+        setItem(response.data);
       })
       .catch((error) => {
         console.error("Error fetching work item detail:", error);
@@ -45,40 +37,98 @@ function Detail() {
       });
   }, [workItem]);
 
-  // Display a loading message while the data is being fetched.
+  // If no data yet, show a loading state.
   if (!item) {
     return <h1>Loading...</h1>;
   }
 
+  // For convenience, reference item.links and item.data in short variables
+  const topLinks = item.links;
+  const data = item.data;
+  const attrs = data?.attributes;
+  const rels = data?.relationships;
+
   return (
     <div className="App">
       <Link to="/">← Back</Link>
-      <h1>
-        {item.attributes.id} - {item.attributes.title}
-      </h1>
-      <table id="detailTable" border="1" cellPadding="5" cellSpacing="0">
+      <h2>Work Item Detail</h2>
+
+      {/* Display top-level "links" */}
+      <h3>Top-Level Links</h3>
+      <table border="1" cellPadding="5" cellSpacing="0">
+        <tbody>
+          <tr>
+            <td>self</td>
+            <td>{topLinks?.self}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* Display data object */}
+      <h3>Data</h3>
+      <table border="1" cellPadding="5" cellSpacing="0">
+        <tbody>
+          <tr>
+            <td>type</td>
+            <td>{data?.type}</td>
+          </tr>
+          <tr>
+            <td>id</td>
+            <td>{data?.id}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* Display attributes */}
+      <h3>Attributes</h3>
+      <table border="1" cellPadding="5" cellSpacing="0">
         <tbody>
           <tr>
             <td>ID</td>
-            <td>{item.attributes.id}</td>
+            <td>{attrs?.id}</td>
           </tr>
           <tr>
             <td>Title</td>
-            <td>{item.attributes.title}</td>
+            <td>{attrs?.title}</td>
           </tr>
           <tr>
-            <td>Description</td>
-            <td>{item.attributes.description && item.attributes.description.value}</td>
+            <td>Type</td>
+            <td>{attrs?.type}</td>
           </tr>
           <tr>
-            <td>Severity</td>
-            <td>{item.attributes.severity}</td>
+            <td>Status</td>
+            <td>{attrs?.status}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      {/* Display relationships */}
+      <h3>Relationships</h3>
+      <table border="1" cellPadding="5" cellSpacing="0">
+        <tbody>
+          <tr>
+            <td>Project ID</td>
+            <td>{rels?.project?.data?.id}</td>
           </tr>
           <tr>
-            <td>Priority</td>
-            <td>{item.attributes.priority}</td>
+            <td>Project relationship link</td>
+            <td>{rels?.project?.links?.self}</td>
           </tr>
-          {/* Add other fields as needed */}
+        </tbody>
+      </table>
+
+      {/* Display data.links (distinct from top-level links) */}
+      <h3>Data Links</h3>
+      <table border="1" cellPadding="5" cellSpacing="0">
+        <tbody>
+          <tr>
+            <td>self</td>
+            <td>{data?.links?.self}</td>
+          </tr>
+          <tr>
+            <td>portal</td>
+            <td>{data?.links?.portal}</td>
+          </tr>
         </tbody>
       </table>
     </div>
